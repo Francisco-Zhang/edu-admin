@@ -4,14 +4,20 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.lesson.spring.dto.BookCondition;
 import com.lesson.spring.dto.BookInfo;
 import com.lesson.spring.dto.BookInfo.*;
+import org.junit.Test;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpMethod;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -35,6 +41,9 @@ public class BookController {
         return  books;
 
     }
+
+
+
 
     @RequestMapping(value = "/book2", method = RequestMethod.GET)
     @JsonView(BookListView.class)   //此视图不包含 content 字段
@@ -64,9 +73,27 @@ public class BookController {
 
         BookInfo bookInfo=new BookInfo();
         bookInfo.setName("战争与和平");
+        bookInfo.setPublishDate(new Date());
         return  bookInfo;
 
     }
+
+
+    @PostMapping
+    //默认是从param中取值，不写RequestBody注解，book 为null,@Valid注解会使用BookInfo中的约束注解对参数进行校验
+    public BookInfo create(@Valid @RequestBody BookInfo book, BindingResult result){
+        // bingdingResult存放的是参数校验的结果，此处是为了给出优雅的提示，而不是服务器返回错误码
+        if(result.hasErrors()){
+            result.getAllErrors().stream().forEach(e->System.out.println(e.getDefaultMessage()));
+        }
+        System.out.println("id is "+book.getId());
+        System.out.println("name is "+book.getName());
+        System.out.println("content is "+book.getContent());
+        System.out.println("publishDate is "+book.getPublishDate());//如果不在配置文件中设置时差，会当作标准时间赋值，打印出来的时间会＋8小时
+        book.setId(1L);
+        return  book;
+    }
+
 
 
 

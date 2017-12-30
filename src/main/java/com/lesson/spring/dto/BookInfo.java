@@ -1,6 +1,9 @@
 package com.lesson.spring.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.validator.constraints.NotBlank;
+
+import java.util.Date;
 
 public class BookInfo {
 
@@ -12,7 +15,10 @@ public class BookInfo {
 
     private  String name;
 
+    @NotBlank   // hibernate validator 不为空的约束
     private String content;
+
+    private Date publishDate;
 
     @JsonView(BookListView.class)
     public Long getId() {
@@ -39,5 +45,14 @@ public class BookInfo {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    @JsonView(BookListView.class)
+    public Date getPublishDate() {
+        return publishDate;
+    }
+
+    public void setPublishDate(Date publishDate) {
+        this.publishDate = publishDate;
     }
 }

@@ -35,6 +35,16 @@ public class BookControllerTest {
 
 
     @Test
+    public void  whenCreateSuccess() throws Exception {
+        //String contents="{\"id\":null,\"name\":\"战争与和平\",\"content\":\"不能为空\",\"publishDate\":\"2017-05-05\"}";
+        String contents="{\"id\":null,\"name\":\"战争与和平\",\"content\":null,\"publishDate\":\"2017-05-05\"}";
+        mockMvc.perform(post("/book").content(contents).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"));
+
+    }
+
+    @Test
     public  void  whenQuerySuccess() throws Exception {
         String result =  mockMvc.perform(MockMvcRequestBuilders.get("/book/book2?page=1&sort=name,desc&sort=createdTime,asc")
                 .param("categoryId","1")
@@ -65,8 +75,6 @@ public class BookControllerTest {
         mockMvc.perform(get("/book/10")
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError());
-
-
 
     }
 
