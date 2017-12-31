@@ -18,6 +18,8 @@ import static   org.springframework.test.web.servlet.result.MockMvcResultMatcher
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.servlet.http.Cookie;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = BookShopAdminApplication.class)
 public class BookControllerTest {
@@ -43,6 +45,40 @@ public class BookControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"));
 
     }
+
+
+
+    @Test
+    public void  whenUpdateSuccess() throws Exception {
+        //String contents="{\"id\":null,\"name\":\"战争与和平\",\"content\":\"不能为空\",\"publishDate\":\"2017-05-05\"}";
+        String contents="{\"id\":1,\"name\":\"战争与和平\",\"content\":null,\"publishDate\":\"2017-05-05\"}";
+        mockMvc.perform(put("/book/1").content(contents).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"));
+
+    }
+
+
+    @Test
+    public void  whenDeleteSuccess() throws Exception {
+        // 如果除了id还有其他参数，动作后面加param就行
+        mockMvc.perform(get("/book/1").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+
+
+    @Test
+    public void  whenCookieOrHeaderExists() throws Exception {
+        // 如果除了id还有其他参数，动作后面加param就行
+        mockMvc.perform(get("/book/1")
+                .cookie(new Cookie("token","123456"))
+                .header("auth","xxxxxxxx")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+
 
     @Test
     public  void  whenQuerySuccess() throws Exception {

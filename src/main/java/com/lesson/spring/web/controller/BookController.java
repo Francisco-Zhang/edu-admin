@@ -69,8 +69,10 @@ public class BookController {
     //@GetMapping(value = "/{id}")
     @GetMapping(value = "/{id:\\d}")  //使用正则表达式设定id长度为1位
     @JsonView(BookDetailView.class)   //设定同一个bookInfo返回不同字段的json视图，此视图包含 content
-    public BookInfo getInfo(@PathVariable Long id){
-
+    public BookInfo getInfo(@PathVariable Long id,@CookieValue String token,@RequestHeader String auth){ //用于接收cookie,Header值
+        System.out.println(id);
+        System.out.println(token);
+        System.out.println("auth is "+auth);
         BookInfo bookInfo=new BookInfo();
         bookInfo.setName("战争与和平");
         bookInfo.setPublishDate(new Date());
@@ -94,6 +96,26 @@ public class BookController {
         return  book;
     }
 
+
+    @PutMapping("/{id}")
+    public BookInfo update(@Valid @RequestBody BookInfo book, BindingResult result){
+        // bingdingResult存放的是参数校验的结果，此处是为了给出优雅的提示，而不是服务器返回错误码
+        if(result.hasErrors()){
+            result.getAllErrors().stream().forEach(e->System.out.println(e.getDefaultMessage()));
+        }
+        System.out.println("id is "+book.getId());
+        System.out.println("name is "+book.getName());
+        System.out.println("content is "+book.getContent());
+        System.out.println("publishDate is "+book.getPublishDate());//如果不在配置文件中设置时差，会当作标准时间赋值，打印出来的时间会＋8小时
+        return  book;
+    }
+
+
+    @DeleteMapping(value = "/{id}")  //使用正则表达式设定id长度为1位
+    public void delete(@PathVariable Long id){
+        System.out.println(id);
+
+    }
 
 
 
