@@ -81,6 +81,14 @@ public class BookController {
     }
 
 
+    @GetMapping(value = "/exception")  //使用正则表达式设定id长度为1位
+    public BookInfo getException(){ //用于接收cookie,Header值
+
+        throw new RuntimeException("test");
+
+    }
+
+
     @PostMapping
     //默认是从param中取值，不写RequestBody注解，book 为null,@Valid注解会使用BookInfo中的约束注解对参数进行校验
     public BookInfo create(@Valid @RequestBody BookInfo book, BindingResult result){
