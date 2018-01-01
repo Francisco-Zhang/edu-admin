@@ -30,6 +30,8 @@ public class BookController {
     //或者直接写 String name，与请求中参数名称相同自动赋值,request默认true
     public List<BookInfo> query(@RequestParam(value="name",required = false,defaultValue = "default mvc param") String bookName,
                                 Long categoryId){   //会自动将字符串转为long类型
+
+
         System.out.println(bookName);
         System.out.println(categoryId);
 
@@ -69,7 +71,9 @@ public class BookController {
     //@GetMapping(value = "/{id}")
     @GetMapping(value = "/{id:\\d}")  //使用正则表达式设定id长度为1位
     @JsonView(BookDetailView.class)   //设定同一个bookInfo返回不同字段的json视图，此视图包含 content
-    public BookInfo getInfo(@PathVariable Long id,@CookieValue String token,@RequestHeader String auth){ //用于接收cookie,Header值
+    public BookInfo getInfo(@PathVariable Long id,@CookieValue String token,@RequestHeader String auth) throws Exception { //用于接收cookie,Header值
+
+        //throw  new  Exception("interceptor   test");
         System.out.println(id);
         System.out.println(token);
         System.out.println("auth is "+auth);
@@ -82,10 +86,10 @@ public class BookController {
 
 
     @GetMapping(value = "/exception")  //使用正则表达式设定id长度为1位
-    public BookInfo getException(){ //用于接收cookie,Header值
+    public BookInfo getException() throws Exception {
 
-        throw new RuntimeException("test");
-
+        //throw new RuntimeException("test");
+        throw  new Exception("interceptor test");
     }
 
 
