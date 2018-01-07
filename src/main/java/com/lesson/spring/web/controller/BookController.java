@@ -13,17 +13,23 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
 
 
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 @RestController
 @RequestMapping("/book")
 public class BookController {
 
+
+    private ConcurrentMap<Long,DeferredResult<BookInfo>> map= new ConcurrentHashMap<>();
 
     //@RequestMapping(method = RequestMethod.GET)   //对应  localhost:8060/admin／book
     @GetMapping  //上面一种方式的简写，意思相同
@@ -66,21 +72,61 @@ public class BookController {
         return  books;
 
     }
+//
+//    //@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+//    //@GetMapping(value = "/{id}")
+//    @GetMapping(value = "/{id:\\d}")  //使用正则表达式设定id长度为1位
+//    @JsonView(BookDetailView.class)   //设定同一个bookInfo返回不同字段的json视图，此视图包含 content
+//    public Callable<BookInfo> getInfo(@PathVariable Long id//, @CookieValue String token, @RequestHeader String auth
+//                                       ) throws Exception { //用于接收cookie,Header值
+//
+//        Long start=new Date().getTime();
+//        System.out.println(Thread.currentThread().getName()+"  开始");
+//        //就一个方法的接口可以使用Lamda表达式匿名实现
+//        Callable<BookInfo> result=()->{
+//            System.out.println(Thread.currentThread().getName()+" 线程开始");
+//
+//            Thread.sleep(1000);  //模拟调用远程服务耗时1s
+//            BookInfo bookInfo=new BookInfo();
+//            bookInfo.setName("战争与和平");
+//            bookInfo.setPublishDate(new Date());
+//
+//            System.out.println(Thread.currentThread().getName()+" 线程结束耗时："+(new Date().getTime()-start));
+//            return  bookInfo;
+//        };
+//
+//        System.out.println(Thread.currentThread().getName()+"  返回耗时："+(new Date().getTime()-start));
+//
+//        //throw  new  Exception("interceptor   test");
+//        System.out.println(id);
+////        System.out.println(token);
+////        System.out.println("auth is "+auth);
+//
+//        return  result;   //会在此处等待子线程返回
+//
+//    }
 
-    //@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    //@GetMapping(value = "/{id}")
+
+
     @GetMapping(value = "/{id:\\d}")  //使用正则表达式设定id长度为1位
     @JsonView(BookDetailView.class)   //设定同一个bookInfo返回不同字段的json视图，此视图包含 content
-    public BookInfo getInfo(@PathVariable Long id,@CookieValue String token,@RequestHeader String auth) throws Exception { //用于接收cookie,Header值
+    public DeferredResult<BookInfo> getInfo(@PathVariable Long id) throws Exception { //用于接收cookie,Header值
 
-        //throw  new  Exception("interceptor   test");
-        System.out.println(id);
-        System.out.println(token);
-        System.out.println("auth is "+auth);
-        BookInfo bookInfo=new BookInfo();
-        bookInfo.setName("战争与和平");
-        bookInfo.setPublishDate(new Date());
-        return  bookInfo;
+        Long start=new Date().getTime();
+        System.out.println(Thread.currentThread().getName()+"  开始");
+        //就一个方法的接口可以使用Lamda表达式匿名实现
+        DeferredResult<BookInfo> result= new DeferredResult<BookInfo>();
+        map.put(id,result);
+
+        System.out.println(Thread.currentThread().getName()+"  返回耗时："+(new Date().getTime()-start));
+
+        return  result;   //此处并不会响应前端，方法结束，主线程可以处理其他业务
+
+    }
+
+    //此处是另一个线程监听
+    private void listenMessge(BookInfo bookInfo){
+        map.get(bookInfo.getId()).setResult(bookInfo);  //返回结果，响应前台，不用在主线程产生响应
 
     }
 
