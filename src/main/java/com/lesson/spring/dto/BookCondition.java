@@ -1,9 +1,12 @@
 package com.lesson.spring.dto;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class BookCondition {
 
     private  String name;
 
+    @ApiModelProperty("门类id")
     private Long categoryId;
 
     public String getName() {

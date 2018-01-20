@@ -1,6 +1,7 @@
 package com.lesson.spring.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotBlank;
 
 import java.util.Date;
@@ -13,6 +14,7 @@ public class BookInfo {
 
     private  Long id;
 
+    @ApiModelProperty("图书名称")
     private  String name;
 
     @NotBlank   // hibernate validator 不为空的约束
