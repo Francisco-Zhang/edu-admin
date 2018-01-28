@@ -10,6 +10,8 @@ import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -38,6 +40,11 @@ public class BookController {
     public List<BookInfo> query(@RequestParam(value="name",required = false,defaultValue = "default mvc param") String bookName,
                                 Long categoryId){   //会自动将字符串转为long类型
 
+        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(authentication);
+        if(authentication!=null){
+            System.out.println(authentication.getPrincipal());
+        }
 
         System.out.println(bookName);
         System.out.println(categoryId);
@@ -82,6 +89,14 @@ public class BookController {
     @ApiOperation("获取图书详细信息")
     public Callable<BookInfo> getInfo(@PathVariable Long id//, @CookieValue String token, @RequestHeader String auth
                                        ) throws Exception { //用于接收cookie,Header值
+
+        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(authentication);
+        if(authentication!=null){
+            System.out.println(authentication.getPrincipal());
+        }
+
+
 
         Long start=new Date().getTime();
         System.out.println(Thread.currentThread().getName()+"  开始");
