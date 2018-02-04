@@ -1,18 +1,30 @@
 package com.lesson.spring.web.config;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @EnableWebSecurity
 public class SecurityConfig  extends WebSecurityConfigurerAdapter{
 
 
+
+    @Autowired
+    private AuthenticationSuccessHandler bookShopAuthenticationSuccessHandler;
+
+    @Autowired
+    private AuthenticationFailureHandler  bookShopAuthenticationFailureHandler;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(new MyUserDetailsService());
+        auth.userDetailsService(new MyUserDetailsService())
+            .passwordEncoder(new BCryptPasswordEncoder());
     }
 
     @Override
@@ -31,9 +43,17 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter{
 
         http.httpBasic()
                 .and()
+            .formLogin()
+                .loginPage("/login.html")
+                .loginProcessingUrl("/auth")
+                .usernameParameter("user")   //不进行设置的话，默认的键名为   username,password
+                .passwordParameter("pass")
+                .successHandler(bookShopAuthenticationSuccessHandler)
+                .failureHandler(bookShopAuthenticationFailureHandler)
+                .and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/book").permitAll()    // "/book"  任何人都可以访问
+                .antMatchers("/book","/login.html","/auth").permitAll()    // "/book"  任何人都可以访问
                 .anyRequest().authenticated();   //除了以上所有的其他请求，都需要身份认证才可以访问
 
 
