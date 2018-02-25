@@ -32,7 +32,7 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter{
     @Bean
     public PersistentTokenRepository persistentTokenRepository(){
         JdbcTokenRepositoryImpl tokenRepository=new JdbcTokenRepositoryImpl();
-       // tokenRepository.setCreateTableOnStartup(true);
+       // tokenRepository.setCreateTableOnStartup(true);  //创建表之后，再次创建会报错，所以注释掉
         tokenRepository.setDataSource(dataSource);
         return  tokenRepository;
     }
