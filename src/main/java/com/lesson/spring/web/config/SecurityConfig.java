@@ -2,6 +2,7 @@ package com.lesson.spring.web.config;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -9,6 +10,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+
+import javax.sql.DataSource;
 
 @EnableWebSecurity
 public class SecurityConfig  extends WebSecurityConfigurerAdapter{
@@ -20,6 +25,17 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter{
 
     @Autowired
     private AuthenticationFailureHandler  bookShopAuthenticationFailureHandler;
+
+    @Autowired
+    private DataSource dataSource;
+
+    @Bean
+    public PersistentTokenRepository persistentTokenRepository(){
+        JdbcTokenRepositoryImpl tokenRepository=new JdbcTokenRepositoryImpl();
+       // tokenRepository.setCreateTableOnStartup(true);
+        tokenRepository.setDataSource(dataSource);
+        return  tokenRepository;
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -50,6 +66,9 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter{
                 .passwordParameter("pass")
                 .successHandler(bookShopAuthenticationSuccessHandler)
                 .failureHandler(bookShopAuthenticationFailureHandler)
+                .and()
+                .rememberMe().tokenRepository(persistentTokenRepository())
+                .tokenValiditySeconds(60)    //用于实现记住我的有效期
                 .and()
                 .csrf().disable()
                 .authorizeRequests()
