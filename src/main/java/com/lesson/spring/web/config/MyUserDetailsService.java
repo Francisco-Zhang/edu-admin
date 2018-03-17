@@ -1,6 +1,7 @@
 package com.lesson.spring.web.config;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,7 +17,9 @@ public class MyUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         if(s.equals("zhangsan")){
             String password=new BCryptPasswordEncoder().encode("111111");
-            return  new User("zhangsan",password,new ArrayList<GrantedAuthority>());
+
+            //return  new User("zhangsan",password,new ArrayList<GrantedAuthority>());
+            return  new User("zhangsan",password, AuthorityUtils.createAuthorityList("admin","xxx","aaa"));
         }
         return null;
     }

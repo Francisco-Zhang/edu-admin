@@ -70,11 +70,16 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter{
                 .rememberMe().tokenRepository(persistentTokenRepository())
                 .tokenValiditySeconds(60)    //用于实现记住我的有效期
                 .and()
+                .sessionManagement()
+                .invalidSessionUrl("/session.html")
+                .maximumSessions(1).maxSessionsPreventsLogin(true)
+                .and()
+                .and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/book","/login.html","/auth").permitAll()    // "/book"  任何人都可以访问
-                .anyRequest().authenticated();   //除了以上所有的其他请求，都需要身份认证才可以访问
-
+                .antMatchers("/book","/login.html","/auth","/session.html").permitAll()    // "/book"  任何人都可以访问
+                //.anyRequest().authenticated();   //除了以上所有的其他请求，都需要身份认证才可以访问
+                .anyRequest().access("hasAnyAuthority('admin')");//通用表达式，也可以配置 authenticated权限
 
 
 
