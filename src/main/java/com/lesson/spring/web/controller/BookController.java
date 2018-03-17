@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.lesson.spring.dto.BookCondition;
 import com.lesson.spring.dto.BookInfo;
 import com.lesson.spring.dto.BookInfo.*;
+import com.lesson.spring.service.BookService;
 import io.swagger.annotations.ApiOperation;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -32,6 +34,8 @@ import java.util.concurrent.ConcurrentMap;
 public class BookController {
 
 
+    @Autowired
+    private BookService bookService;
     private ConcurrentMap<Long,DeferredResult<BookInfo>> map= new ConcurrentHashMap<>();
 
     //@RequestMapping(method = RequestMethod.GET)   //对应  localhost:8060/admin／book
@@ -90,11 +94,16 @@ public class BookController {
     public Callable<BookInfo> getInfo(@PathVariable Long id//, @CookieValue String token, @RequestHeader String auth
                                        ) throws Exception { //用于接收cookie,Header值
 
+
+        //bookService.getInfo(1L);  方法级权限配置测试
+
+
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         System.out.println(authentication);
         if(authentication!=null){
             System.out.println(authentication.getPrincipal());
         }
+
 
 
 

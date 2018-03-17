@@ -19,7 +19,7 @@ public class MyUserDetailsService implements UserDetailsService {
             String password=new BCryptPasswordEncoder().encode("111111");
 
             //return  new User("zhangsan",password,new ArrayList<GrantedAuthority>());
-            return  new User("zhangsan",password, AuthorityUtils.createAuthorityList("admin","xxx","aaa"));
+            return  new User("zhangsan",password, AuthorityUtils.createAuthorityList("admin","xxxx","aaa"));
         }
         return null;
     }
