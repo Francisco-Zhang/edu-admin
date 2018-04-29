@@ -16,8 +16,8 @@ public class BookSecurity {
         System.out.println(request.getRequestURL());
         if(authentication.getPrincipal()!=null && authentication.getPrincipal() instanceof UserDetails){
             System.out.println (((UserDetails)authentication.getPrincipal()).getAuthorities()) ;
-
+            return  true;
         }
-        return  true;
+        return  false;
     }
 }

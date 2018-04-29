@@ -120,7 +120,7 @@ public class BookControllerTest {
     public void whenUploadSuccess() throws Exception{
 
         String result = mockMvc.perform(fileUpload("/file/upload")
-        .file(new MockMultipartFile("file","testfile.txt", // "file" 表示的是接收文件对象的参数名
+        .file(new MockMultipartFile("file","测试.txt", // "file" 表示的是接收文件对象的参数名
                 "multipart/form-data","hello upload".getBytes("UTF-8"))))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn().getResponse().getContentAsString();
